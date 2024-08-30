@@ -5,9 +5,18 @@ to integrate github with dev server using amazon linux command history is
     1  cd /
     2  ll
     3  cd data
+       yum install git -y
     4  git init
+       cd root
+       ssh-keygen
+       cd .ssh
+       cat id_rsa.pub
+       cd data
+       vim index1.html
+       git add index1.html
+       git commit -m"first commit"
+       git branch -M main
     5  git remote add origin git@github.com:10747997/jenkins-7997.git
-    6  git branch -M main
     7  pwd
     8  git remote add origin git@github.com:10747997/jenkins-7997.git
     9  git remote -v
