@@ -20,3 +20,21 @@ to integrate github with dev server using amazon linux command history is
    16  git commit -m"second commit" index.html
    17  git push origin main
    18  history
+
+
+   to install jenkins 
+
+    1  free -h
+    2  cat /proc/cpuinfo
+    3  cat /proc/meminfo
+    4  rpmquery jenkins
+    5  dnf install java-17-amazon-corretto -y
+    6  java -version
+    7  wget -O /etc/yum.repos.d/jenkins.repo     https://pkg.jenkins.io/redhat-stable/jenkins.repo
+    8  yum repolist all
+    9  rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+   10  dnf install jenkins -y
+   11  systemctl enable jenkins
+   12  systemctl start jenkins
+   13  cat /var/lib/jenkins/secrets/initialAdminPassword
+   14  history
