@@ -1,3 +1,395 @@
-hhgff
-hhfhfhhfhfhfhf
-this is edited now
+ CREATING CUSTOM AMI
+
+create instance in mumbai ---name:web-server---redhat----t2.small ---select existing key pair or create new ---subnet =1b -----sec group =existing or create new-----Launch 
+instance
+
+select instance ----sec groups ----edit inbound rules ----http  ----custom ipv4----save rules------
+
+connect and go to cd-----
+
+rpmquery httpd
+yum install httpd -y
+cd /var/www/html/
+echo "This is My Dev-server on cloud " >index.html
+cat index.html
+systemctl start httpd
+
+systemctl status httpd
+systemctl enable httpd
+ip a s
+
+
+
+
+go to aws instance web-server ----stop instance-----again start instance and connect agqin----cd-----
+yum install vsftpd -y
+yum install cifs-utils -y
+yum install nfs-utils -y
+yum install tree -y
+cd /tmp/
+touch index.txt{1..100}
+cd /tmp/
+ll
+
+stop the instance-----actions ---img and templates----create img ---amis ---descr----IMAGE-----
+
+
+go to AMIS-----owned by me ---select amis----actions----launch instance from ami with same sec key  and subnet
+Create new instance with created custom ami
+
+While connecting via ssh, change root to ec2-user
+Copy public ip addr and check if it is shwoing content in index.html
+
+copy public ip of custom-instance -----go to google paste ip :80-----it shows echo statement that we put above
+
+
+cd /tmp
+ll
+
+
+
+
+migrate 
+
+
+AWS dashboard>>select custom-ami
+
+Actions>>copy AMI
+
+Select Destination Region---singapore ---copy ami
+
+Go to destination region
+
+In AMIs you will be able to see, custom AMI copied
+
+Create new instance with custom AMI-------------select ami----launch instance with ami -----name =singa-------any key pair ---any sec group ----subnet any except c ---launch
+connect to singa ----cd-----when u paste just change root to ec2-user
+sudo su -
+cd /tmp
+ll
+
+to see it on google ----elect singa--------security----sec group ----edit ----http-----anywhere ipv4-----saved
+copy public ip :80 paste on google
+
+
+You will be able to see all the data inside it.
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------
+Create 3 instances --------
+
+1)node1-----t2.micro---aws linux-----select existing key -----subnet= 1b  ----------------create secgroup (5sep-sec)---------Laumch
+
+2)node2 -------t2.micro ------redhat------same as choosen above ------subnet=  1b    ------------------same as above 5sep-sec-----laumch
+
+3)node3 -------t2.micro ---------ubuntu--------same ---------------subnet=1a ---------------------same-----------launch
+
+
+go to security groups ------click on the sec group we have taken for 3 inst (5sep-sec) ---------edit inbound ------add rule -------nfs -----custom anywhere ipv4   ----save
+
+
+Connect to node 1-------------------sudo su - ---------------cat /etc/os-release --------------rpmquery nfs-utils----------(already present in aws )
+connect to node 2-------------------sudo su - ---------------cat /etc/os-release --------------rpmquery nfs-utils----------yum install nfs-utils------rpmquery nfs-utils
+connect to node 3---------------------sudo su - -------------------apt update -------------apt install nfs-common-----
+
+
+
+Go to AWS --------------Search EFS----------create file syst --------efs-vol --------create---------click on file syst id ---------network ----wait till mount target status 
+gets as available for all 3 ------attach(present at top) --------mount by Ip------provide the subnet where we have to attach efs -------1b -----
+go node1 cd ------mkdir /nfs-data ------- copy the coomand of nfs client from mount ip page -------paste in node 1 cd --------jsut change end of the link / /nfs-data --not
+work ----go to aws file syst ---click on already created file syst----network ---manage-----select our sec-group in all 3---
+----and untick default ----save
+----------duplicate aws window -----instances -------security groups ----------select the same security group that is mentioned near mount target state-----click on it ------edit 
+inbound --------add rule ------nfs ------any ipv4 --------save -----go to cmd node1 -----copy the coomand of nfs client from mount ip page -------paste in node 1 cd --------
+jsut change end of the link / /nfs-data  ------works--------cd /nfs-data --------make few sample files ------touch data.txt{1..100}------ll--------
+now again attach to different instance -------(copy the previous  command of nfs client from mount ip page)---cmd node2- ---------mkdir /nfs-redhat --------
+-paste the command-----cd /nfs-redhat ---------ll 
+
+
+go to cd of node3 -------sudo su - ---------mkdir /nfs-ubuntu ----------now go to the copied key page ---1st change the available zone to 1a ----then copy-----
+paste it / /nfs-ubuntu----------cd /nfs-ubuntu -----------ll
+
+
+go to singapore loc ---create instance -singa---aws---existing key---subnet=1a---existing sec----launch
+
+efs--------filesysttems----click on file-----now go to replications -------create replication ------replicate to existing (fr that we need to have existing file syst 
+at destination)   -------go to singapore-----------search EFS -------Create Efs -----singa-efs -------create------ go to mumbai -------replicate to existing (fr that we
+need to have existing file syst ---------Desti AWS region -------singaore 1-------browse efs-------it shows the existing file system of singapore which we 
+created now --------select ----choose-----disable protection --------file syst protect ------disable-------save changes ----refresh the page ----create replication --
+-------go to singapore aws -----file sysytems ----go to file syst idf -----go to replication ---we can see (let it finish enabling state) -
+--------create instance in singapore ------singa---aws----select any key pair ------1b -------select existing group ---launch-----------go to singa efs to see the sec group ----note it -----go to network secu ----scurit groups
+------sellct the group which we noted ------edit inbound rules ---add rule----nfs -------custom any ipv4 ----save-----refresh page ---connect to singa instance ---
+go to cd -----sudo su -mkdir /singa-nfs ----------go singa efs on aws -------attcah ---mount by ip ---------availabi zone ----1b ------copy key -----paste on singa cd 
+/ /singa-nfs 
+
+go to aws file syst ---click on already created file syst----network ---manage-----select our sec-group in all 3---
+----and untick default ----save
+
+
+cd /singa-nfs
+
+
+
+.......................................................................................................................................
+go to aws---mumbai ----search for S3 bucket---------open S3
+create bucket -------bucketname=aws-test-8015----------ACLS enabled --------untick  block all public access -----
+------- tick  I acknowledge    create bucket ---------click on the bucket --------upload file -----add file ----upload
+
+go to myprofile----sec credentials---click---access keys---create access key ----i understand---create
+copy both access and secret key-----download.csv file
+
+go to ec2 instance--create inst-----s3-inst---aws---t2.micro---existing key----1a---enale auto assign---existing group---
+launch----connect to it--cmd --paste---sudo su -
+go to google---https://cloudkul.com/blog/mounting-s3-bucket-linux-ec2-instance/------
+copy all commands for centa os in cmd one by one------
+in step 7 ---(one step where we need to edit a file---vim something---paste access key:paste seret key
+
+in step 9---do only a) give ur bucketname instead of the one given in command
+
+df-h(check bucket created)
+
+10)cd/mys3bucket
+echo "this is a test filr" >>test.txt
+
+now u can see test.txt in s3 bucket
+search s3 bucket-----buckets----aniket.....-----obj
+
+
+----------------------------------------------------------------------------------------------------------------------------------------
+AWS------Search VPC ---- your vpc ------creaye Vpc -----(default vpc is always present dont do anything to it ) -----test-vpc ----IPV4 CIDR =10.0.0.0/16----create vpc 
+Internet gateways------create ----test-igw ----create----select it go to actions atach to test-vpc ----subnets ---creaste subnet ----slect vpc ---(test-vpc) 
+-----subnet name=public-subnet -------avail zone --1a---subnet cidr block-----10.0.0.0/24 -----create 
+
+
+create subnet ----private-subnet ------------------avail zone =1b (take diiff from 1st subnet)----subnet cidr block----10.0.1.0/24-------create
+create route table ------public-rt -------vpc=test-vpc----------create route table ----
+
+duplicate AWS ----ec2 ---launch instance----vpc-server------aws----t2.micro ----keypair existing (6Sep-sec)---- edit ----choose test-vpc---choose public subnet ----
+auto assign ---enable ----create sec group =vpc-sec------launch ---select vpc-server inst ----security groups----edit inbound rules ---add rule ---http  anyipv4  ---save
+
+config routev table ---------Route Tables---select public-rt ------routes----edit routs---add routes ----0.0.0.0/0 ---target =Internet gateway---select ....test-igw ----
+save -----subnet asso ----edit subnet asso ---public-subnet(select)--------save asso ----
+
+go to instance ---launch instance ----copy go to cd--------paste -----sudo su - --------yum install httpd -------cd /var/www/html/-----------
+echo "This is my vpc-public" > index.html --------cd --------systemctl start httpd -----systemctl enable httpd -------
+
+launch new instance-------db-server----aws----t2.micro----give same key as vpc-server ---vpc=test-vpc ---subnet ----private-subnet -----sec also samesec also same---
+auto assign public ip---disable-----launch----
+
+go to cd web-server---ip a s----copy inet of 2nd from 10 till / ----ping paste ip a s--------
+
+go to sec group ----select 6 sep ---eidt inbound rules----add ----All icmp ipv4 -----anywhere ipv4 ---save
+go to instances ---see key ---go to downloads ---open key in notepad----copy entire key -------go to cd vpc-server ------vim 6sep-sec(keyname).pem ----enter---paste key
+
+chmod 400 vim 6sep-sec(keyname).pem------connectv to db-server ----copy key -----paste in cmd of vpc-server -----(success) ---sudo su - ------yum install httpd - ---
+(not work as not connected to internet ,for this create a nat gateway)
+
+nat gateway -----create ----name=test-ngw ------select public subnet----public----allocate elastic ip----create ------go to route tables----create route table---
+private-rt -------test-vpc---create -----select private-rt -----routes ----edit routes- --add route --- 0.0.0.0/0 ---nat gateway --test-ngww---save--
+subnet asso ----edit ----private-subnet ---save asso ---resfresh  ------ go to cmd  ----(if disconnexted---then first copy ssh of web-server ---sudo su - 
+---then ssh key of db-server ----sudo su - ---yum install httpd -) -----ping google.com  ----(success)
+
+
+for vpc peering follow same steps as above just in singapore loc and just at last connecting two vpcs
+
+
+
+
+
+
+now in both instance of mumbai and singapore (private  instances to be taken in both loc
+
+
+vim /etc/ssh/sshd_config --------se nu ----uncomment line 40 permitrootlogin yes----------passwordauthentication yes
+
+systemctl start shhd -----systemctl enable sshd ------
+
+do above same steps for singapore private instance cmd  -------
+
+after that do ssh-keygen in both ----------cd .ssh -----------ll-----------cat id_rsa.pub ----------copy the key ------(go to singa 
+if we are in mumbai)  --------ssh-keygen (singapore) ----cd .ssh --ll -----vim authorized_keys-----paste the key of mumbai-----
+----copy public key of singapore and paste in mumbai
+ go to cmmd of both mubai and singa and write ping google.com so that machine doesnt get disconnected
+
+
+
+go to vpc (mumbai)-----peering connections ----- create ------mumbai-to-singa ------test-vpc -------another region
+----select region =singapore --- vpc id= (---go to singapore vpc ---your vpc ----copy vpc ID) paste  ---create
+go to singa ----go to peering connections ----selct it ---action---accept req---refresh --status-active
+
+go to route table (singa) ---singa-public-rt ----routes -----edit --add route ---10.0.0.0/16---peering connections ----select the next 
+cell whhatever comes ===save
+
+go to route table (singa) ---singa-private-rt ----routes -----edit --add route ---10.0.0.0/16---peering connections ----select the next 
+cell whhatever comes ===save
+
+go to route table (mumbai) ---private-rt ----routes -----edit --add route ---10.0.0.0/16---peering connections ----select the next 
+cell whhatever comes ===save
+
+go to mumbai(route tables)---public-rt ---edit rooute --add route ---20.0.0.0/16 ---peering conn ----select cell with whatever comes
+
+save
+
+
+go to singapore instance cmd------select any one inst---copy public id ----ping paste
+
+
+sending file from singa to mumbai
+
+vim dracula.txt ---------i love drac----ll---scp dracula.txt root@private ip of mumbai: /tmp-------
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+Launch instance----- web-server----AWS---t2.micro -----create key pair -----6sep-key------network settings-----subnet 1b -----create security group ---6sep-sec----- 8gb---launch
+connect ssh key of instance web-server 
+sudo su -
+lsblk ------view ur available disk devices on instance
+
+AWS-----duplicate window ----go to EC2 volumes ----create volume----type=gp2-----size=5gb ------subnet=should be same as instance =ap-south-1b ------create volume------rename 
+volume by clicking on it ----data-disk------it will show available in vol state------select data-disk -----Actions ------atach vol ------select instamce =web-server-----
+device name=/dev/xvdbb ------atach vol -----go to instance web-server-----command line of web-server
+
+lsblk ----check if xvdbbb is present
+mkfs.ext4 /dev/xvdbb -----mkfs means make file system ----- from it choosing ext4 as file sysyt followed by volume id
+blkid -----format
+
+creating mount point for that make a directory inside root folder
+
+mkdir /data
+mount /dev/xvdbb /data/
+
+df-h ------we can see the ,mount point
+
+cd /data/
+
+creating sample files
+
+touch index.txt{1..100}
+ll ----view all the files
+
+above mount was temporary
+below is permanent mounting
+
+blkid -----copy UUID OF /dev/xvdbb
+
+
+vim /etc/fstab -----enter ----go inside the file----type UUID=(paste)     /data  ext4      defaults   0       0  ----esc key ---wq!
+
+df -h  
+
+go to aws instance state ---reboot instance (after rebooting check if mount is permanent
+
+df -h
+cd /data
+ll (to check if files are present)
+
+
+
+TASK - RESIZE THE DISK  (can be done only once)
+
+go to AWS ----go to volumes ----select data-disk-----action ----modify vol ----size (increased)=8 gb-----modify  -----go to cd
+
+
+lsblk ----- here we can see size of xvdbb as 8gb 
+df -h  ------but here usable is of 5 gb 
+resize2fs /dev/xvdbb 
+df -h ------------now after resizing size is 8 gb
+cd /data
+ll
+check ifexisting files are present then successful mount
+
+
+
+REDUCING VOLUME
+
+volume size can never be reduce ----the solution to do this is ----create a new volume with reqd size and transferring the data from old vol to newly created less sized vol
+
+rebbot instance web-server ----- create volume----data-2-----gp2(should be same as vol 1)-----size=6 -------ap south 1-b ---crreate vol----
+select data-2 ------actions ----atttach vol -----instance=web-server -----device name= /dev/xvdbc ---atach vol
+
+go to cd ---
+
+
+lsblk -----------(to check whether xvdbc  is present
+df -h -----------
+lsblk -fs -----------(file syst on xvdbb and xvdbc should be same bcoz we are transferring data from xvdbb to xvdbc 
+
+creating file syst
+
+mkfs.ext4 /dev/xvdbc
+
+mkdir /data2
+
+mount /dev/xvdbc /data2/
+
+df-h -----
+
+cd /data ------------going inside data to copy its files
+ll ------------display data
+
+mv * /data2 ------------moving all files to data 2
+
+cd 
+cd /data2
+ll
+
+now to remove mount ie xvdbb
+
+cd
+vim /etc/fstab -----------opens new window comment out  last line of UUID -----esc -save and exit
+
+systemctl daemon-reload
+umount /data
+df -h ------------we can see xvdbb is unmounted
+lsblk ------------xvdbb will be present here
+
+
+go to AWS ----- Select 1st vol ie data-disk ----actions-----detach ----again select data-disk --------delete
+
+
+
+
+RESIZE ROOT VOLUME
+
+
+df -h
+lsblk ------can see xvda is root and to resize vol of xvda1
+
+AWS-select instance ---web-server  ----- storage -----select vol with xvda annd click on vol id ---name it  =root-vol----actions ---modify vol ---size =12----modify
+
+
+lsblk ----------xvda is of size 12 
+go to google -type extend xfs filesystem copy comment from redhat
+
+growpart /dev/xvda 1 (include that file from df-h that has / in path)
+
+xfs_growfs -d /dev/xvda1
+
+df-h  ----size is increaed
+
+
+
+
+ACCCESS MUMBAI EC2 INSTANCE WITH SAME DATA FROM SINGAPORE
+
+
+Aws ----Singapore loc- ----launch new instance ----prod-server ---redhat ----t2.micro----slect existing key pair ----subnet---1b ---select existing sec-group----launch
+
+duplicate aws window --------go to mumbai loc -------vol --------data-2 selct----actions ----create snapshot -----descr---This iis data snapshot -----create --------
+go to snapshots --------Select data-2-snap by renaming it ------action -----copy snapshot--------select destination ------ap southeast 1 -------copy snapshot
+
+go to singapor inst -------snapshot----we can see the snapshot ----click on it ---------actions -----create vol from napshot ---gp2--size=7----avail zone =1b------create vol
+go to vol  -----select vol with 7gb ------actions ----attach vol  ----instance -prod-server ----------devce name=/dev/xvdbb -------atch vol-----connect to singapore inst
+
+command prompt
+
+sudo su -
+lsblk
+mkdir /tech
+mount /dev/xvdbb/tech
+df-h
+cd /tech
+ll
