@@ -125,7 +125,11 @@ repeat the same process in another server
 vpc 20.0.0.0/16
 subnets public 20.0.0.0/24
         private 20.0.1.0/24
-create peering connection
+create peering connections
+generate ssh-keygen and add public key in each others authorized keys files
+scp filename.txt root@ip address:/mnt on one region
+scp filename.txt root@ip address:/tmp on other region
+
 
 
 for s3 bucket 
