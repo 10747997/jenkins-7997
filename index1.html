@@ -622,6 +622,111 @@ To delete cluster
 
  When You want to delete cluster
  eksctl delete cluster --name my-cluster
+
+        
+ .........................................................................................................................................
+  docker commands
+
+   rpmquery docker
+    2  rpmquery docker-ce
+    3  rpmquery podman
+    4  yum update -y
+    5  sudo yum install -y yum-utils
+    6  yum repolist
+    7  yum install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    8  sudo yum install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    9  sudo yum-config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
+   10  yum repolist
+   11  yum install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+   12  docker info
+   13  systemctl status docker
+   14  systemctl start docker
+   15  systemctl enable docker
+   16  systemctl status docker
+   17  docker images
+   18  docker pull httpd
+   19  docker pull ubuntu
+   20  docker images
+   21  hostnamectl set-hostname docker.example.com
+   22  bash
+   23  docker ps -a
+   24  ip a s
+   25  docker images
+   26  systemctl status docker
+   27  docker ps
+   28  docker ps -a
+   29  docker images
+   30  ip a s
+   31  docker -it --name web-app ubuntu:latest /bin/bash
+   32  docker run -it --name web-app ubuntu:latest /bin/bash
+   33  curl http://localhost
+   34  docker attach web-app
+   35  service apache2 start
+   36  docker attach web-app
+   37  docker run -it --name web-app ubuntu:latest /bin/bash
+   38  docker ps -a
+   39  docker attach web-app
+   40  docker start web-app
+   41  docker ps -a
+   42  docker ps -a
+   43  docker ps -a
+   44  docker attach web-app
+   45  docker ps -a
+   46  curl http://172.17.0.2
+   47  docker attach web-app
+   48  curl http://172.17.0.2
+   49  docker run -it ubuntu :latest /bin/bash
+   50  docker run -it ubuntu:latest /bin/bash
+   51  curl http://172.17.0.3
+   52  docker attach nifty_diffie
+   53  curl http://172.17.0.3
+   54  docker rename nifty_diffie web-app2
+   55  docker kill fervent_pascal
+   56  docker run -it --name top-notch -p 8080:80 ubuntu:latest /bin/bash
+   57  curl http://172.17.0.4
+   58  docker run -it --name my-app -p 3600:80 ubuntu:latest /bin/bash
+   59  curl http://13.126.53.51:3600
+   60  docker kill my-app
+   61  history
+   62  docker ps -a
+   63   curl http://172.17.0.2
+   64  docker volume ls
+   65  docker volume create my-vol
+   66  docker volume ls
+   67  cd /var/lib/docker/volumes/
+   68  ll
+   69  cd my-vol/
+   70  ll
+   71  cd _data
+   72  ll
+   73  cd
+   74  docker run -it --name data-app -p
+   75  docker run -it --name data-app -p 2222:80 -v my-vol:/ var/www/html ubuntu:latest /bin/bash
+   76  docker run -it --name data-app -p 2222:80 -v my-vol:/var/www/html ubuntu:latest /bin/bash
+   77   curl http://172.17.0.5
+   78  cd /var/lib/docker/volumes
+   79  ll
+   80  cd my-vol/
+   81  ll
+   82  cd _data
+   83  ll
+   84  docker ps -a
+   85  docker attach data-app
+   86  docker kill data-app
+   87  cd /var/lib/docker/volumes
+   88  ll
+   89  cd my-vol/
+   90  ll
+   91  cd _data
+   92  ll
+   93  cd
+   94  docker ps -a
+   95  docker run -it --name data-app -p 2222:80 -v my-vol:/var/www/html ubuntu:latest /bin/bash
+   96  docker ps
+   97  history      
+        
+
+        
         
 
         
